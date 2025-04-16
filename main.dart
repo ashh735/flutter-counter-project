@@ -1,47 +1,38 @@
 import 'package:flutter/material.dart';
-import 'subject_input_screen.dart';
-import 'subject_list_screen.dart';
+import 'qr_scanner_screen.dart';
+import 'qr_generator_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: HomeScreen(),
+    routes: {
+      '/scan': (context) => QRScannerScreen(),
+      '/generate': (context) => QRGeneratorScreen(),
+    },
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Subject Manager',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        scaffoldBackgroundColor: Colors.grey[100],
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          ),
+    return Scaffold(
+      appBar: AppBar(title: Text('QR App')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: Text('Scan QR Code'),
+              onPressed: () => Navigator.pushNamed(context, '/scan'),
+            ),
+            ElevatedButton(
+              child: Text('Generate QR Code'),
+              onPressed: () => Navigator.pushNamed(context, '/generate'),
+            ),
+          ],
         ),
       ),
-      initialRoute: '/input',
-      routes: {
-        '/input': (context) => const SubjectInputScreen(),
-        '/list': (context) => const SubjectListScreen(),
-      },
     );
   }
 }
