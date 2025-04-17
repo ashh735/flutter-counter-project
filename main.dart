@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
-import 'qr_scanner_screen.dart';
-import 'qr_generator_screen.dart';
+import 'home_screen.dart';
+import 'bgnu_map_screen.dart';
+import 'search_map_screen.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: HomeScreen(),
-    routes: {
-      '/scan': (context) => QRScannerScreen(),
-      '/generate': (context) => QRGeneratorScreen(),
-    },
-  ));
+  runApp(MyApp());
 }
 
-class HomeScreen extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('QR App')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              child: Text('Scan QR Code'),
-              onPressed: () => Navigator.pushNamed(context, '/scan'),
-            ),
-            ElevatedButton(
-              child: Text('Generate QR Code'),
-              onPressed: () => Navigator.pushNamed(context, '/generate'),
-            ),
-          ],
-        ),
+    return MaterialApp(
+      title: 'University Maps',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: HomeScreen(),
+      routes: {
+        '/bgnu': (context) => BGNUMapScreen(),
+        '/search': (context) => SearchMapScreen(),
+      },
     );
   }
 }
