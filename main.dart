@@ -1,53 +1,93 @@
 import 'package:flutter/material.dart';
+import 'db_helper.dart';
 
 void main() {
-  runApp(PakistanFlagApp());
+  runApp(MyApp());
 }
 
-class PakistanFlagApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pakistan Flag App',
+      title: 'SQLite Example',
       theme: ThemeData(primarySwatch: Colors.green),
-      home: HomeScreen(),
-      debugShowCheckedModeBanner: false,
+      home: HomePage(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FlagScreen()),
-            );
-          },
-          child: Text('Show Pakistan Flag'),
-        ),
-      ),
-    );
-  }
+  _HomePageState createState() => _HomePageState();
 }
 
-class FlagScreen extends StatelessWidget {
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _controller = TextEditingController();
+  List<Map<String, dynamic>> _records = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTexts();
+  }
+
+  Future<void> _loadTexts() async {
+    final data = await DBHelper().getTexts();
+    setState(() {
+      _records = data;
+    });
+  }
+
+  Future<void> _saveText() async {
+    final text = _controller.text.trim();
+    if (text.isNotEmpty) {
+      await DBHelper().insertText(text);
+      _controller.clear();
+      _loadTexts();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Pakistan Flag')),
-      body: Center(
-        child: Image.network(
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Flag_of_Pakistan.svg/320px-Flag_of_Pakistan.svg.png',
-          width: 300,
-          errorBuilder: (context, error, stackTrace) {
-            return Text('Failed to load image');
-          },
+      appBar: AppBar(title: Text('Save to SQLite')),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  labelText: 'Enter text',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity, // Button takes full width
+                child: ElevatedButton(
+                  onPressed: _saveText,
+                  child: Text('Save'),
+                ),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: _records.isEmpty
+                    ? Center(child: Text('No records found.'))
+                    : ListView.builder(
+                  itemCount: _records.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(_records[index]['content']),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
